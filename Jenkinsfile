@@ -34,7 +34,20 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image to Docker Hub') {
+    stage('Push Docker Image to Docker Hub') {
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh """
+                echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                docker push $DOCKER_IMAGE
+                docker logout
+                """
+            }
+        }
+    }
+}
+    stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
                     withDockerRegistry([credentialsId: DOCKER_CREDENTIALS, url: ""]) {
