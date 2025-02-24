@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "abineshkumar/react-random"
-        DOCKER_CREDENTIALS = "dckr_pat_cAGBrCntAHiHqJGji-3HmKZFGWk"
-        AWS_REGION = "eu-north-1"
+        DOCKER_CREDENTIALS_ID = "docker-hub-credentials"
+        AWS_REGION = "us-east-1"
         EKS_CLUSTER = "react-app"
     }
 
@@ -29,7 +29,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t $DOCKER_IMAGE ."
+                    sh """
+                    export DOCKER_BUILDKIT=1
+                    docker build -t $DOCKER_IMAGE .
+                    """
                 }
             }
         }
@@ -50,7 +53,7 @@ pipeline {
     stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    withDockerRegistry([credentialsId: DOCKER_CREDENTIALS, url: ""]) {
+                    withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: "https://index.docker.io/v1/"]) {
                         sh "docker push $DOCKER_IMAGE"
                     }
                 }
@@ -69,4 +72,14 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            echo "Pipeline executed successfully! 🚀"
+        }
+        failure {
+            echo "Pipeline failed. Check the logs for errors. ❌"
+        }
+    }
 }
+
