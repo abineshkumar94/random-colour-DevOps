@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="body" style={{ backgroundColor: bgColor }}>
       <button className="button" onClick={changeColor}  style={{ width: "200px", height: "40px", fontSize: "15px" }}>
-        Random Colour
+        Change of Colour with Abinesh Project
       </button>
     </div>
   );
